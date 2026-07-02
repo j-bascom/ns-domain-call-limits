@@ -6,7 +6,7 @@
  * on every domain in a SkySwitch / NetSapiens NS-API territory, sized to each
  * domain's live device count.
  *
- * Self-contained: no database, no repo dependencies. It authenticates
+ * Self-contained: no database, no Redis, no repo dependencies. It authenticates
  * to the NS-API itself (OAuth2 password grant), then reads device counts LIVE
  * from the API per domain. Requires only Node.js 18+ (for global fetch).
  *
@@ -186,11 +186,17 @@ async function main() {
   const territory = await askOrEnv('SS_TERRITORY', 'Territory code', '20243');
   const base = (envOr('SS_BASE_URL') || `https://${territory}-hpbx.dashmanager.com/ns-api`).replace(/\/+$/, '');
 
-  // 2) Credentials
-  const clientId = await askOrEnv('SS_CLIENT_ID', 'OAuth client_id', `${territory}.n8n`);
+  // 2) Credentials — all unique to your SkySwitch account (NOT derived from the
+  //    territory). Get these from SkySwitch / your account admin.
+  const clientId = await askOrEnv('SS_CLIENT_ID', 'OAuth client_id (from SkySwitch)');
   const username = await askOrEnv('SS_USERNAME', 'API username');
   const password = await askOrEnv('SS_PASSWORD', 'API password', undefined, true);
   const secret = await askOrEnv('SS_CLIENT_SECRET', 'OAuth client_secret (blank if none)', '', false, true);
+
+  if (!clientId || !username || !password) {
+    console.error('\nclient_id, username, and password are all required.');
+    process.exit(1);
+  }
 
   // 3) Sizing knobs
   const min = parseInt(await askOrEnv('SS_MIN', 'Minimum call paths (floor)', '4'), 10);
