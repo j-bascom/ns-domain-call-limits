@@ -59,10 +59,14 @@ docker run -it --rm -v "$PWD":/w -w /w node:20 node set-domain-call-limits-stand
 
 | Prompt | Meaning | Default |
 |---|---|---|
-| **Territory code** | Your SkySwitch territory number (e.g. `12345`). The tool signs in at `https://{territory}-hpbx.dashmanager.com`. | — |
-| **OAuth client_id** | Usually `{territory}.n8n`. | `{territory}.n8n` |
-| **API username / password** | Your SkySwitch API login. The password is hidden as you type. | — |
-| **OAuth client_secret** | Only if your account requires one. Leave blank otherwise. | blank |
+| **Territory code** | Your SkySwitch territory number (e.g. `12345`). Only used to build the sign-in address `https://{territory}-hpbx.dashmanager.com`. | — |
+| **OAuth client_id** | Unique to your SkySwitch account — provided by SkySwitch. It is **not** derived from your territory. | — |
+| **API username / password** | Your SkySwitch API login (unique to your account). The password is hidden as you type. | — |
+| **OAuth client_secret** | Unique to your account, if your setup uses one. Leave blank otherwise. | blank |
+
+> All four credentials — **client_id, client_secret, username, and password** — are
+> specific to your SkySwitch account. Get them from SkySwitch or your account admin;
+> don't guess them from the territory number.
 | **Minimum call paths** | The fewest paths any domain will get (a floor). | `4` |
 | **Maximum call paths** | The most paths any domain will get (a cap). | `30` |
 | **Call-paths-per-device ratio** | Paths per device before the floor/cap are applied. | `0.75` |
